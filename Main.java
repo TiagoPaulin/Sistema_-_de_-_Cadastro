@@ -1,5 +1,7 @@
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -107,13 +109,24 @@ public class Main {
     }
     // metodo para listar usuarios cadastrados no sistema
     public static void listarCadastros(File cadastros) throws FileNotFoundException {
-        BufferedReader br = new BufferedReader(new FileReader(cadastros));
-        br.lines()
-                .map(String::toLowerCase)
-                .map(usuario -> {
-                    int indice = usuario.indexOf(".txt");
-                    return usuario.substring(0, indice);
+        File[] arquivos = cadastros.listFiles(); // lista todos os arquivos da pasta de cadastros
+        List<String> nomes = Arrays.stream(arquivos)// inicia o fluxo de dados que retornara a lista com os nomes de cada usuario cadastrado
+                .map(arquivo -> {
+                    String nome;  // atributo que ira receber o nome do ususario
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(arquivo));
+                        br.readLine();    // pula a primeira linha
+                        nome = br.readLine(); // le a linha com o nome
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return nome;
                 })
+                .collect(Collectors.toList()); // retorna os dados obtidos em forma de lista
+        nomes.stream() // inicia o fluxo de dados que ira printar a lista de nomes
                 .forEach(System.out::println);
+
     }
 }
