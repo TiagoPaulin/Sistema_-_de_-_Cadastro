@@ -57,6 +57,7 @@ public class Main {
                     nPerguntas --;
                     break;
                 case 5:
+                    buscarCadastro(cadastros);
                     break;
                 case 6:
                     System.out.println("Encerrando programa");
@@ -81,7 +82,6 @@ public class Main {
             System.out.print("R: ");
             dados.add(scanQuestionario.nextLine());
         }
-        scanQuestionario.close();
         br.close();
         // instanciando o novo usuario e printando as informações principais
         System.out.println("Informações principais: ");
@@ -119,8 +119,7 @@ public class Main {
         List<String> nomes = Arrays.stream(arquivos)// inicia o fluxo de dados que retornara a lista com os nomes de cada usuario cadastrado
                 .map(arquivo -> {
                     String nome;  // atributo que ira receber o nome do ususario
-                    try {
-                        BufferedReader br = new BufferedReader(new FileReader(arquivo));
+                    try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
                         br.readLine();    // pula a primeira linha
                         nome = br.readLine(); // le a linha com o nome
                     } catch (IOException e) {
@@ -139,7 +138,6 @@ public class Main {
         Scanner scanPergunta = new Scanner(System.in);
         System.out.print("Digite a pergunta que deseja inserir no formulário: ");
         String pergunta = scanPergunta.nextLine();
-        scanPergunta.close();
         bw.write((nPerguntas + 1) + " - " +  pergunta + "\n");
         bw.flush();
         bw.close();
@@ -158,7 +156,6 @@ public class Main {
         Scanner scanNumPergunta = new Scanner(System.in);
         System.out.print("Entre com o número da pergunta que deseja deletar do formulario: ");
         int num = scanNumPergunta.nextInt();
-        scanNumPergunta.close();
         BufferedWriter bw = new BufferedWriter(new FileWriter(formulario));
         perguntas.stream() // fluxo de dados para reescrever as perguntas no formulário sem a pergunta removida
                 .filter(pergunta -> !pergunta.startsWith(num + " - ")) // filtra a pergunta que o usuário deseja remover]
@@ -168,7 +165,7 @@ public class Main {
                         String s = pergunta.substring(1); // armazeno a pergunta sem o indice
                         pergunta = (n - 1) + s; // concateno a pergunta com seu novo indice
                     }
-                    return pergunta; // retorno a pergunta 
+                    return pergunta; // retorno a pergunta
                 })
                 .forEach(pergunta -> { // escreve pergunta por pergunta no formulario
                     try {
@@ -179,5 +176,150 @@ public class Main {
                     }
                 });
         bw.close();
+    }
+    // metodo para buscar usuarios cadastrados
+    public static void buscarCadastro(File cadastros){
+        File[] arquivos = cadastros.listFiles();
+        Scanner scanBusca = new Scanner(System.in);
+        System.out.println("Como voce deseja realizar a busca?");
+        System.out.println("1. Nome");
+        System.out.println("2. Idade");
+        System.out.println("3. Email");
+        System.out.print("Selecione uma opção: ");
+        int opcaoBusca = scanBusca.nextInt();
+        switch (opcaoBusca){
+            case 1:
+                buscaNome(arquivos);
+                break;
+            case 2:
+                buscaIdade(arquivos);
+                break;
+            case 3:
+                buscaEmail(arquivos);
+                break;
+            default:
+                System.out.println("Opção inválida");
+                break;
+        }
+    }
+    // busca por nome
+    public static void buscaNome(File[] arquivos){
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Digite o nome da pessoa: ");
+        String nome = scan.nextLine();
+        List<File> filtrados = Arrays.stream(arquivos) // retorna uma lista com os arquivos filtrados baseados na busca
+                .filter(arquivo -> {
+                    try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
+                        br.readLine();
+                        String nomeArquivo = br.readLine();
+                        return (nomeArquivo.toLowerCase().startsWith((" Nome: " + nome).toLowerCase())) || nomeArquivo.equalsIgnoreCase(nome) || nomeArquivo.contains(nome); // verifica se o arquivo esta com o nome inserido na busca
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList()); // retorna em forma de lista
+        if (filtrados.isEmpty()){
+            System.out.println(" ");
+            System.out.println("========================================");
+            System.out.println("NENHUM REULTADO ENCONTRADO PARA: " + nome);
+            System.out.println("========================================");
+        } else {
+            System.out.println(" ");
+            System.out.println("========================================");
+            System.out.println("RESULTADOS PARA: " + nome);
+            System.out.println("========================================");
+            filtrados.stream() // printa as informações dos arquivos filtrados no terminal
+                    .forEach(arquivo -> {
+                        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
+                            String linha;
+                            while ((linha = br.readLine()) != null){
+                                System.out.println(linha);
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+        }
+    }
+    // busca por idade
+    public static void buscaIdade(File[] arquivos){
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Digite a idade da pessoa: ");
+        int idade = scan.nextInt();
+        List<File> filtrados = Arrays.stream(arquivos) // retorna uma lista com os arquivos filtrados baseados na busca
+                .filter(arquivo -> {
+                    try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
+                        br.readLine();
+                        br.readLine();
+                        br.readLine();
+                        int idadeArquivo = Integer.parseInt(br.readLine().substring(8));
+                        return idade == idadeArquivo; // verifica se o arquivo esta com o nome inserido na busca
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList()); // retorna em forma de lista
+        if (filtrados.isEmpty()){
+            System.out.println(" ");
+            System.out.println("========================================");
+            System.out.println("NENHUM REULTADO ENCONTRADO PARA: " + idade);
+            System.out.println("========================================");
+        } else {
+            System.out.println(" ");
+            System.out.println("========================================");
+            System.out.println("RESULTADOS PARA: " + idade);
+            System.out.println("========================================");
+            filtrados.stream() // printa as informações dos arquivos filtrados no terminal
+                    .forEach(arquivo -> {
+                        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
+                            String linha;
+                            while ((linha = br.readLine()) != null){
+                                System.out.println(linha);
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+        }
+    }
+    // busca por email
+    public static void buscaEmail(File[] arquivos){
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Digite o email da pessoa: ");
+        String email = scan.nextLine();
+        List<File> filtrados = Arrays.stream(arquivos) // retorna uma lista com os arquivos filtrados baseados na busca
+                .filter(arquivo -> {
+                    try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
+                        br.readLine();
+                        br.readLine();
+                        String emailArquivo = br.readLine();
+                        return (emailArquivo.toLowerCase().startsWith((" Email: " + email).toLowerCase())) || emailArquivo.equalsIgnoreCase(email); // verifica se o arquivo esta com o nome inserido na busca
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList()); // retorna em forma de lista
+        if (filtrados.isEmpty()){
+            System.out.println(" ");
+            System.out.println("========================================");
+            System.out.println("NENHUM REULTADO ENCONTRADO PARA: " + email);
+            System.out.println("========================================");
+        } else {
+            System.out.println(" ");
+            System.out.println("========================================");
+            System.out.println("RESULTADOS PARA: " + email);
+            System.out.println("========================================");
+            filtrados.stream() // printa as informações dos arquivos filtrados no terminal
+                    .forEach(arquivo -> {
+                        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
+                            String linha;
+                            while ((linha = br.readLine()) != null){
+                                System.out.println(linha);
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+        }
     }
 }
