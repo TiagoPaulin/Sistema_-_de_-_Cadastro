@@ -1,6 +1,4 @@
 import java.io.*;
-import java.nio.Buffer;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,6 +53,8 @@ public class Main {
                     nPerguntas ++;
                     break;
                 case 4:
+                    deletarPergunta(formulario);
+                    nPerguntas --;
                     break;
                 case 5:
                     break;
@@ -139,13 +139,45 @@ public class Main {
         Scanner scanPergunta = new Scanner(System.in);
         System.out.print("Digite a pergunta que deseja inserir no formulário: ");
         String pergunta = scanPergunta.nextLine();
+        scanPergunta.close();
         bw.write((nPerguntas + 1) + " - " +  pergunta + "\n");
         bw.flush();
         bw.close();
     }
     // metodo para deletar pergunta do formulario
-    public static void deletarPergunta(File formulario){
-        
+    public static void deletarPergunta(File formulario) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(formulario));
+        List<String> perguntas = new ArrayList<>();  // array que vai armazenar as perguntas do formulario
+        System.out.println("==== PERGUNTAS CADASTRADAS ====");
+        br.lines() // inicia o fluxo de dados
+                .forEach(linha -> {
+                    perguntas.add(linha); // armazena a pergunta no array
+                    System.out.println(linha); // printa a pergunta no terminal
+                });
+        br.close();
+        Scanner scanNumPergunta = new Scanner(System.in);
+        System.out.print("Entre com o número da pergunta que deseja deletar do formulario: ");
+        int num = scanNumPergunta.nextInt();
+        scanNumPergunta.close();
+        BufferedWriter bw = new BufferedWriter(new FileWriter(formulario));
+        perguntas.stream() // fluxo de dados para reescrever as perguntas no formulário sem a pergunta removida
+                .filter(pergunta -> !pergunta.startsWith(num + " - ")) // filtra a pergunta que o usuário deseja remover]
+                .map(pergunta -> { // rearranja os indices das perguntas
+                    int n = Character.getNumericValue(pergunta.charAt(0)); // armazena o indice da pergunta em um atributo num
+                    if(n > num){ // se essa perguntas for posterior a pergunta deletada
+                        String s = pergunta.substring(1); // armazeno a pergunta sem o indice
+                        pergunta = (n - 1) + s; // concateno a pergunta com seu novo indice
+                    }
+                    return pergunta; // retorno a pergunta 
+                })
+                .forEach(pergunta -> { // escreve pergunta por pergunta no formulario
+                    try {
+                        bw.write(pergunta + "\n");
+                        bw.flush();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+        bw.close();
     }
-
 }
