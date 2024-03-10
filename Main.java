@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,20 +12,23 @@ public class Main {
             System.out.println("Formulário de perguntas criado com sucesso!");
         }
         // inserindo as perguntas padrão
-        BufferedWriter bw = new BufferedWriter(new FileWriter(formulario, true));
-        bw.write("1 - Qual seu nome completo?\n");
-        bw.write("2 - Qual seu email de contato?\n");
-        bw.write("3 - Qual sua idade?\n");
-        bw.write("4 - Qual sua altura?\n");
-        bw.flush();
-        bw.close();
+        if (formulario.length() == 0){ // verifica se o formulario esta vazio para inserir as perguntas iniciais
+            BufferedWriter bw = new BufferedWriter(new FileWriter(formulario, true));
+            bw.write("1 - Qual seu nome completo?\n");
+            bw.write("2 - Qual seu email de contato?\n");
+            bw.write("3 - Qual sua idade?\n");
+            bw.write("4 - Qual sua altura?\n");
+            bw.flush();
+            bw.close();
+        }
         // criando a pasta que ira armazenar o txt de cada usuário
         File cadastros = new File("CADASTROS");
         if (cadastros.mkdir()){
             System.out.println("Pasta de cadastros criada com sucesso!");
         }
-        // contabiliza o numero de cadastros no sistema
+        // contabiliza o numero de cadastros no sistema e o numero de perguntas do formulario
         int nCadastros = 0;
+        int nPerguntas = 4;
         // menu de execucao
         int opcao = 0;
         Scanner scanMenu = new Scanner(System.in);
@@ -34,7 +38,7 @@ public class Main {
             System.out.println("2. Listar todos os usuários cadastrados");
             System.out.println("3. Cadastrar nova pergunta no formulário");
             System.out.println("4. Deletar pergunta do formulário");
-            System.out.println("5. Pesquisar usuário pro nome, idade ou email");
+            System.out.println("5. Pesquisar usuário por nome, idade ou email");
             System.out.println("6. Encerrar programa");
             System.out.print("Selecione uma das opções: ");
             opcao = scanMenu.nextInt();
@@ -47,6 +51,8 @@ public class Main {
                     listarCadastros(cadastros);
                     break;
                 case 3:
+                    adicionarPergunta(formulario, nPerguntas);
+                    nPerguntas ++;
                     break;
                 case 4:
                     break;
@@ -108,7 +114,7 @@ public class Main {
         bw.close();
     }
     // metodo para listar usuarios cadastrados no sistema
-    public static void listarCadastros(File cadastros) throws FileNotFoundException {
+    public static void listarCadastros(File cadastros){
         File[] arquivos = cadastros.listFiles(); // lista todos os arquivos da pasta de cadastros
         List<String> nomes = Arrays.stream(arquivos)// inicia o fluxo de dados que retornara a lista com os nomes de cada usuario cadastrado
                 .map(arquivo -> {
@@ -117,8 +123,6 @@ public class Main {
                         BufferedReader br = new BufferedReader(new FileReader(arquivo));
                         br.readLine();    // pula a primeira linha
                         nome = br.readLine(); // le a linha com o nome
-                    } catch (FileNotFoundException e) {
-                        throw new RuntimeException(e);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -129,4 +133,19 @@ public class Main {
                 .forEach(System.out::println);
 
     }
+    // metodo para adicionar pergunta no formulario
+    public static void adicionarPergunta(File formulario, int nPerguntas) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(formulario, true));
+        Scanner scanPergunta = new Scanner(System.in);
+        System.out.print("Digite a pergunta que deseja inserir no formulário: ");
+        String pergunta = scanPergunta.nextLine();
+        bw.write((nPerguntas + 1) + " - " +  pergunta + "\n");
+        bw.flush();
+        bw.close();
+    }
+    // metodo para deletar pergunta do formulario
+    public static void deletarPergunta(File formulario){
+        
+    }
+
 }
