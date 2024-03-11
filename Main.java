@@ -2,9 +2,6 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 public class Main {
-    // definindo constantes do programa
-    public static final int MINIMO_CARACTERES = 10;
-    public static final int IDADE_MINIMA = 18;
     // main
     public static void main(String[] args) throws IOException {
         // criando o txt do formulario com as perguntas
@@ -88,7 +85,7 @@ public class Main {
         br.close();
         // instanciando o novo usuario e printando as informações principais
         System.out.println("Informações principais: ");
-        Usuario usuario = new Usuario(dados.get(0), dados.get(1), Integer.parseInt(dados.get(2)), Double.parseDouble(dados.get(3)));
+        Usuario usuario = new Usuario(dados.get(0), dados.get(1), dados.get(2), dados.get(3));
         System.out.println(usuario);
         // Utilizando stream para criar o nome de arquivo padrao
         String s = (nCadastros + 1) + "-" + dados.get(0).toUpperCase() + ".txt"; // a string "crua"

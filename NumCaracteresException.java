@@ -8,6 +8,6 @@ public class NumCaracteresException extends Exception{
     // mensagem de erro
     @Override
     public String toString() {
-        return "O nome do cadastro deve ter no minimo " + minimo + "caracteres!";
+        return "O nome do cadastro deve ter no minimo " + minimo + " caracteres!";
     }
 }
