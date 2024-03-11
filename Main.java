@@ -178,6 +178,10 @@ public class Main {
         Scanner scanNumPergunta = new Scanner(System.in);
         System.out.print("Entre com o número da pergunta que deseja deletar do formulario: ");
         int num = scanNumPergunta.nextInt();
+        if (num <= 4){
+            System.out.println("Voce nao pode deletar as 4 primeiras perguntas");
+            System.exit(1);
+        }
         BufferedWriter bw = new BufferedWriter(new FileWriter(formulario));
         perguntas.stream() // fluxo de dados para reescrever as perguntas no formulário sem a pergunta removida
                 .filter(pergunta -> !pergunta.startsWith(num + " - ")) // filtra a pergunta que o usuário deseja remover]
