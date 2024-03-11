@@ -100,9 +100,14 @@ public class Main {
             dados.add(scanQuestionario.nextLine());
         }
         br.close();
+        // verificando se o email ja esta cadastrado no sistema
+        if (emailCadastrado(dados.get(1), cadastros)){
+            System.out.println("O email inserido ja esta cadastrado no sistema");
+            System.exit(1);
+        }
         // instanciando o novo usuario e printando as informações principais
-        System.out.println("Informações principais: ");
         Usuario usuario = new Usuario(dados.get(0), dados.get(1), dados.get(2), dados.get(3));
+        System.out.println("Informações principais: ");
         System.out.println(usuario);
         // Utilizando stream para criar o nome de arquivo padrao
         String s = (nCadastros + 1) + "-" + dados.get(0).toUpperCase() + ".txt"; // a string "crua"
@@ -120,7 +125,7 @@ public class Main {
                     .skip(4)             // a partir do quarto dados
                     .forEach(dado -> {
                         try {
-                            bw.write(dado); // faço a escrita do dado no txt
+                            bw.write("\n" + dado); // faço a escrita do dado no txt
                             bw.newLine();
                             bw.flush();
                         } catch (IOException e) {
@@ -229,7 +234,7 @@ public class Main {
                     try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
                         br.readLine();
                         String nomeArquivo = br.readLine();
-                        return (nomeArquivo.toLowerCase().startsWith((" Nome: " + nome).toLowerCase())) || nomeArquivo.equalsIgnoreCase(nome) || nomeArquivo.contains(nome); // verifica se o arquivo esta com o nome inserido na busca
+                        return (nomeArquivo.toLowerCase().startsWith((" Nome: " + nome).toLowerCase())) || nomeArquivo.equalsIgnoreCase(" Nome: " + nome) || nomeArquivo.contains(nome); // verifica se o arquivo esta com o nome inserido na busca
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -310,7 +315,7 @@ public class Main {
                         br.readLine();
                         br.readLine();
                         String emailArquivo = br.readLine();
-                        return (emailArquivo.toLowerCase().startsWith((" Email: " + email).toLowerCase())) || emailArquivo.equalsIgnoreCase(email); // verifica se o arquivo esta com o nome inserido na busca
+                        return (emailArquivo.toLowerCase().startsWith((" Email: " + email).toLowerCase())) || emailArquivo.equalsIgnoreCase(" Email: " + email); // verifica se o arquivo esta com o nome inserido na busca
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -338,5 +343,25 @@ public class Main {
                         }
                     });
         }
+    }
+    // metodo para verificar se o email ja esta cadastrado
+    public static boolean emailCadastrado(String email, File cadastros){
+        File[] arquivos = cadastros.listFiles();
+        List<File> filtrados = Arrays.stream(arquivos) // retorna uma lista com os arquivos filtrados baseados no email
+                .filter(arquivo -> {
+                    try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
+                        br.readLine();
+                        br.readLine();
+                        String emailArquivo = br.readLine();
+                        return emailArquivo.equals(" Email: " + email); // verifica se o arquivo esta com o nome inserido na busca
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+        if (!filtrados.isEmpty()){
+            return true;
+        }
+        return false;
     }
 }
