@@ -1,8 +1,11 @@
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
 public class Main {
+    // definindo constantes do programa
+    public static final int MINIMO_CARACTERES = 10;
+    public static final int IDADE_MINIMA = 18;
+    // main
     public static void main(String[] args) throws IOException {
         // criando o txt do formulario com as perguntas
         File formulario = new File("formulario.txt");

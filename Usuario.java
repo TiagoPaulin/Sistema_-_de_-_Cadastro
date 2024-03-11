@@ -1,14 +1,14 @@
 public class Usuario {
-    // definindo atributos
+    // definindo atributos da classe
     private String nome;
     private String email;
     private int idade;
     private double altura;
     // metodo construtor
     public Usuario(String nome, String email, int idade, double altura){
-        this.nome = nome;
+        setNome(nome);
         this.email = email;
-        this.idade = idade;
+        setIdade(idade);
         this.altura = altura;
     }
     // metodos get
@@ -26,13 +26,27 @@ public class Usuario {
     }
     // metodos set
     public void setNome(String nome) {
-        this.nome = nome;
+        try {
+            this.nome = nome;
+            if(nome.length() > MINIMO_CARACTERES){
+                throw new NumCaracteresException(MINIMO_CARACTERES);
+            }
+        } catch (NumCaracteresException e) {
+            e.getMessage();
+        }
     }
     public void setEmail(String email) {
         this.email = email;
     }
     public void setIdade(int idade) {
-        this.idade = idade;
+        try {
+            this.idade = idade;
+            if (idade < IDADE_MINIMA){
+                throw new MinIdadeException(IDADE_MINIMA);
+            }
+        } catch (MinIdadeException e){
+            e.getMessage();
+        }
     }
     public void setAltura(double altura) {
         this.altura = altura;
