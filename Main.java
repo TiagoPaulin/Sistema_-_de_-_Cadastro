@@ -10,12 +10,24 @@ public class Main {
             System.out.println("Formulário de perguntas criado com sucesso!");
         }
         // inserindo as perguntas padrão
-        if (formulario.length() == 0){ // verifica se o formulario esta vazio para inserir as perguntas iniciais
+        if (formulario.length() == 0){
             BufferedWriter bw = new BufferedWriter(new FileWriter(formulario, true));
             bw.write("1 - Qual seu nome completo?\n");
             bw.write("2 - Qual seu email de contato?\n");
             bw.write("3 - Qual sua idade?\n");
             bw.write("4 - Qual sua altura?\n");
+            bw.flush();
+            bw.close();
+        }
+        // criando log de cadastro
+        File logCadastro = new File("log.txt");
+        if (logCadastro.createNewFile()){
+            System.out.println("Arquivo de log criado com sucesso!");
+        }
+        // log inicial
+        if (logCadastro.length() == 0) {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(logCadastro));
+            bw.write("0");
             bw.flush();
             bw.close();
         }
@@ -25,7 +37,8 @@ public class Main {
             System.out.println("Pasta de cadastros criada com sucesso!");
         }
         // contabiliza o numero de cadastros no sistema e o numero de perguntas do formulario
-        int nCadastros = 0;
+        BufferedReader br = new BufferedReader(new FileReader(logCadastro));
+        int nCadastros = Integer.parseInt(br.readLine()); // pega o numero de usuarios cadastrados no sistema ao inicio da execucao
         int nPerguntas = 4;
         // menu de execucao
         int opcao = 0;
@@ -61,6 +74,10 @@ public class Main {
                     break;
                 case 6:
                     System.out.println("Encerrando programa");
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(logCadastro));
+                    bw.write(String.valueOf(nCadastros));
+                    bw.flush();
+                    bw.close();
                     break;
                 default:
                     System.out.println("Opção inválida");
