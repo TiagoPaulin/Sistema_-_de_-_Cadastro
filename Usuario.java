@@ -1,3 +1,4 @@
+import excecoes.*;
 public class Usuario {
     // definindo atributos da classe
     private String nome;
