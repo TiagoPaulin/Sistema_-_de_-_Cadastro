@@ -1,4 +1,4 @@
-package servicos;
+package excecoes;
 
 public class MinIdadeException extends Exception {
     // atributo da classe

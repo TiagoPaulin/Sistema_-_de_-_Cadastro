@@ -1,4 +1,4 @@
-package servicos;
+package excecoes;
 
 public class ValidaAlturaException extends Exception {
     // metodo construtor

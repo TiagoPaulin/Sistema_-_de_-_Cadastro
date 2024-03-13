@@ -1,4 +1,4 @@
-package servicos;
+package excecoes;
 
 public class NumCaracteresException extends Exception{
     // atributo da classe

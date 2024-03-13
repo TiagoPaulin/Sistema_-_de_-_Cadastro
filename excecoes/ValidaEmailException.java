@@ -1,4 +1,4 @@
-package servicos;
+package excecoes;
 
 public class ValidaEmailException extends Exception {
     // metodo construtor
