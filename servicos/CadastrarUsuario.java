@@ -2,6 +2,7 @@ package servicos;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import entidades.Usuario;
 import excecoes.*;
@@ -55,7 +56,7 @@ public class CadastrarUsuario {
 
 
     // metodo que exibe o formulário e retorna os dados do ususário
-    public static ArrayList<String> coletarDados () {
+    private static ArrayList<String> coletarDados () {
 
         // recebendo as perguntas do formulário em uma lista
         List<String> perguntas = formulario.leitura(formulario.getFormulario());
@@ -85,14 +86,14 @@ public class CadastrarUsuario {
 
 
     // método que valida as respostas dadas pelo usuário no cadastro
-    public static boolean validaResposta (String pergunta, String resposta) {
+    private static boolean validaResposta (String pergunta, String resposta) {
 
         try {
 
             if (pergunta.contains("nome") && resposta.length() < MINIMO_CARACTERES){
                 throw new NumCaracteresException(MINIMO_CARACTERES);
             }
-            if (pergunta.contains("e-mail") && !resposta.contains(REGEX_EMAIL)){
+            if ((pergunta.contains("e-mail") && !resposta.contains(REGEX_EMAIL)) || emailCadastrado(resposta)){
                 throw new ValidaEmailException();
             }
             if (pergunta.contains("idade") && Integer.parseInt(resposta) < IDADE_MINIMA){
@@ -110,6 +111,35 @@ public class CadastrarUsuario {
             return false;           // se a resposta não passar retorna false e a pergunta é feita novamente
 
         }
+    }
+
+
+    // metodo para verificar se o email ja esta cadastrado
+    private static boolean emailCadastrado(String email){
+
+        File[] arquivos = cadastros.getCadastros().listFiles();
+
+        List<File> filtrados = Arrays.stream(arquivos) // retorna uma lista com os arquivos filtrados baseados no email
+                .filter(arquivo -> {
+                    try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
+
+                        br.readLine();
+                        String emailArquivo = br.readLine();
+                        return emailArquivo.equals("Email: " + email); // verifica se o arquivo esta com o nome inserido na busca
+
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        if (!filtrados.isEmpty()){
+
+            return true;
+
+        }
+
+        return false;
     }
 
 
