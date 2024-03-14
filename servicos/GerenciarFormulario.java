@@ -17,16 +17,15 @@ public class GerenciarFormulario {
     public static void adicionarPergunta () {
 
         // coleta a nova pergunta
-        Scanner scanPergunta = new Scanner(System.in);
-        System.out.print("Digite a pergunta que deseja inserir no formulário: ");
-        String pergunta = scanPergunta.nextLine();
 
-        pergunta = ((log.getNumeroPerguntas() + 1) + " - " +  pergunta + "\n"); // formata a pergunta
+        System.out.print("Digite a pergunta que deseja inserir no formulário: ");
+        String pergunta = scan.nextLine();
+
+        // formata a pergunta
+        pergunta = ((log.getNumeroPerguntas() + 1) + " - " +  pergunta + "\n");
 
         formulario.escrita(pergunta, formulario.getFormulario(), true); // escreve a nova pergunta no formulario
 
-        // contabiliza uma pergunta
-        log.setNumeroPerguntas(log.getNumeroPerguntas() + 1);
 
     }
 
@@ -42,15 +41,26 @@ public class GerenciarFormulario {
                 .forEach(System.out::println);
 
         // solicita que o usuário escolha uma pelo indice
-        System.out.print("Entre com o número da pergunta que deseja deletar do formulario: ");
-        int num = scan.nextInt();
+        int num;
+        do {
+
+            System.out.print("Entre com o número da pergunta que deseja deletar do formulario: ");
+            num = scan.nextInt();
+
+            if (num <= 4){
+                System.out.println("Não é possível deletar as 4 primeiras perguntas");
+            }
+
+        } while (num <= 4);
+
+        int escolha = num;
 
         // atualiza o array de perguntas retirando a perguntas escolhida e atualizando o índice das demais
         perguntas = perguntas.stream()
-                .filter(pergunta -> !pergunta.startsWith(num + " - "))      // filtra a pergunta que o usuário deseja remover]
+                .filter(pergunta -> !pergunta.startsWith(escolha + " - "))      // filtra a pergunta que o usuário deseja remover]
                 .map(pergunta -> {                                          // rearranja os indices das perguntas
                     int n = Character.getNumericValue(pergunta.charAt(0));  // armazena o indice da pergunta em um atributo n
-                    if(n > num){                                            // se essa pergunta for posterior a pergunta deletada
+                    if(n > escolha){                                            // se essa pergunta for posterior a pergunta deletada
                         String s = pergunta.substring(1);         // armazeno a pergunta sem o indice
                         pergunta = (n - 1) + s;                            // concateno a pergunta com seu novo indice
                     }
@@ -61,9 +71,8 @@ public class GerenciarFormulario {
         formulario.escrita("", formulario.getFormulario(), false); // limpa o formulario
 
         perguntas.stream()
-                .forEach(pergunta -> formulario.escrita(pergunta, formulario.getFormulario(), true)); // reescreve o formulario
+                .forEach(pergunta -> formulario.escrita(pergunta + "\n", formulario.getFormulario(), true)); // reescreve o formulario
 
-       log.setNumeroPerguntas(log.getNumeroPerguntas() - 1);
     }
 
 

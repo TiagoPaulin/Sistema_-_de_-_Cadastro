@@ -42,26 +42,30 @@ public class Menu {
             System.out.println("6. Encerrar programa");
             System.out.print("Selecione uma das opções: ");
             opcao = scan.nextInt();
+            scan.nextLine();
 
             switch (opcao){
                 case 1:
                     cadastrarUsuario();
+                    log.setNumeroCadastros(log.getNumeroCadastros() + 1); // contabiliza um cadastro
                     break;
                 case 2:
                     listarCadastros();
                     break;
                 case 3:
                     adicionarPergunta();
+                    log.setNumeroPerguntas(log.getNumeroPerguntas() + 1); // acrescenta uma pergunta
                     break;
                 case 4:
                     deletarPergunta();
+                    log.setNumeroPerguntas(log.getNumeroPerguntas() - 1); // decresce uma pergunta
                     break;
                 case 5:
                     buscarCadastro();
                     break;
                 case 6:
                     System.out.println("Encerrando programa");
-                    log.atualizarLog(String.valueOf(log.getNumeroCadastros()), String.valueOf(log.getNumeroPerguntas()));
+                    log.atualizarLog(String.valueOf(log.getNumeroCadastros()), String.valueOf(log.getNumeroPerguntas())); // atualiza o log
                     scan.close();
                     break;
                 default:

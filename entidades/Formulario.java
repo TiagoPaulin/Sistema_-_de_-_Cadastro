@@ -10,7 +10,7 @@ public class Formulario implements Arquivo {
     private File formulario;
     private List<String> perguntasIniciais =
             List.of("1 - Qual seu nome completo?\n", "2 - Qual seu e-mail?\n",
-                    "3 - Qual sua idade?\n", "4 - Qual sua altura?");
+                    "3 - Qual sua idade?\n", "4 - Qual sua altura?\n");
 
     // metodo construtor
     public Formulario () {

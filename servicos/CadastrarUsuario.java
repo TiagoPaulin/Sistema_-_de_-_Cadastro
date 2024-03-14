@@ -37,7 +37,7 @@ public class CadastrarUsuario {
                     .skip(4) // a partir da quarta
                     .forEach(dado -> {
                         try {
-                            bw.write(dado);
+                            bw.write("\n" + dado);
                             bw.flush();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -50,8 +50,6 @@ public class CadastrarUsuario {
         System.out.println("Informações principais: ");
         System.out.println(usuario);
 
-        // contabiliza um cadastro
-        log.setNumeroCadastros(log.getNumeroCadastros() + 1);
     }
 
 
@@ -93,11 +91,15 @@ public class CadastrarUsuario {
             if (pergunta.contains("nome") && resposta.length() < MINIMO_CARACTERES){
                 throw new NumCaracteresException(MINIMO_CARACTERES);
             }
-            if ((pergunta.contains("e-mail") && !resposta.contains(REGEX_EMAIL)) || emailCadastrado(resposta)){
+            if ((pergunta.contains("e-mail") && !resposta.contains(REGEX_EMAIL))){
                 throw new ValidaEmailException();
             }
             if (pergunta.contains("idade") && Integer.parseInt(resposta) < IDADE_MINIMA){
                 throw new MinIdadeException(IDADE_MINIMA);
+            }
+            if (emailCadastrado(resposta)){
+                System.out.println("Email já cadastrado no sistema");
+                return false;
             }
             if (pergunta.contains("altura") && !resposta.contains(REGEX_ALTURA)){
                 throw new ValidaAlturaException();

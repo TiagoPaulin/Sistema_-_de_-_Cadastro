@@ -20,6 +20,7 @@ public class BuscarUsuario {
 
         File[] arquivos = cadastros.getCadastros().listFiles(); // lista todos os registros
 
+        System.out.println("---------------------------------------------");
         Arrays.stream(arquivos)
             .map(arquivo -> {                                   // pega o arquivo e retorna a string do nome
 
@@ -37,6 +38,7 @@ public class BuscarUsuario {
 
             })
             .forEach(System.out::println);                      // printa todos os nomes registrados
+        System.out.println("---------------------------------------------");
     }
 
 
@@ -51,6 +53,7 @@ public class BuscarUsuario {
         System.out.println("3. Email");
         System.out.print("Selecione uma opção: ");
         int opcaoBusca = scan.nextInt();
+        scan.nextLine();
 
         switch (opcaoBusca){
             case 1:
@@ -80,9 +83,8 @@ public class BuscarUsuario {
                 .filter(arquivo -> {
                     try (BufferedReader br = new BufferedReader(new FileReader(arquivo))){
 
-                        br.readLine();
                         String nomeArquivo = br.readLine();
-                        return (nomeArquivo.toLowerCase().startsWith((" Nome: " + nome).toLowerCase())) || nomeArquivo.equalsIgnoreCase(" Nome: " + nome) || nomeArquivo.contains(nome); // verifica se o arquivo esta com o nome inserido na busca
+                        return (nomeArquivo.toLowerCase().startsWith(("Nome: " + nome).toLowerCase())) || nomeArquivo.equalsIgnoreCase("Nome: " + nome) || nomeArquivo.contains(nome); // verifica se o arquivo esta com o nome inserido na busca
 
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -107,7 +109,7 @@ public class BuscarUsuario {
 
                         br.readLine();
                         br.readLine();
-                        int idadeArquivo = Integer.parseInt(br.readLine().substring(8));
+                        int idadeArquivo = Integer.parseInt(br.readLine().substring(7));
                         return idade == idadeArquivo; // verifica se o arquivo esta com o nome inserido na busca
 
                     } catch (IOException e) {
@@ -132,7 +134,7 @@ public class BuscarUsuario {
 
                         br.readLine();
                         String emailArquivo = br.readLine();
-                        return (emailArquivo.toLowerCase().startsWith((" Email: " + email).toLowerCase())) || emailArquivo.equalsIgnoreCase(" Email: " + email); // verifica se o arquivo esta com o nome inserido na busca
+                        return (emailArquivo.toLowerCase().startsWith(("Email: " + email).toLowerCase())) || emailArquivo.equalsIgnoreCase("Email: " + email) || emailArquivo.contains(email); // verifica se o arquivo esta com o nome inserido na busca
 
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -170,6 +172,7 @@ public class BuscarUsuario {
                             while ((linha = br.readLine()) != null){
                                 System.out.println(linha);
                             }
+                            System.out.println("-----------------------------------");
 
                         } catch (IOException e) {
                             throw new RuntimeException(e);
