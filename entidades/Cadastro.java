@@ -22,8 +22,11 @@ public class Cadastro {
 
 
     // metodo que adiciona o arquivo do usuário na pasta de "CADASTROS"
-    public void adiciorArquivo (File arquivo) throws IOException {
+    public BufferedWriter cadastro (File arquivo) throws IOException {
+
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(cadastros, arquivo.getName()), true));
+        return bw;
+
     }
 
 
